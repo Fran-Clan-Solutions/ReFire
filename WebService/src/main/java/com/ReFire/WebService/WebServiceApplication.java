@@ -15,8 +15,14 @@ public class WebServiceApplication
     }
     
     @GetMapping("/search")
-    public String search(@RequestParam(value = "ingredient", defaultValue = "") String ingredient)
+    public String search()
     {
-    	return String.format("Searching for recipes with the following ingredients: %s", ingredient);
+    	return String.format("Searching for recipes...");
+    }
+    
+    @GetMapping("/addIngredient")
+    public String addIngredient(@RequestParam(value = "ingredient", defaultValue = "") String ingredient)
+    {
+    	return String.format(ingredient);
     }
 }

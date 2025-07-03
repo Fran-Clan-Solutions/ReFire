@@ -1,14 +1,17 @@
 <html>
     <head>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-        <script src="script.js"></script>
     </head>
     <body>
         <h1>
             Refire
         </h1>
+        
         <input id="ingredient_input" type="text"></input>
         <button onclick="addIngredient()">Add Ingredient</button>
-        <label id="ingredient_list">A message will show here</label>
+        <button onclick="search()">Search</button>
+        <br><label id="ingredient_list"></label>
+
+        <script src="script.js"></script>
     </body>
 </html>
