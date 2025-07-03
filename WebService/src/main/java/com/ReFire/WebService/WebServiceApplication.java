@@ -13,9 +13,10 @@ public class WebServiceApplication
     {
       SpringApplication.run(WebServiceApplication.class, args);
     }
+    
     @GetMapping("/search")
-    public String search()
+    public String search(@RequestParam(value = "ingredient", defaultValue = "") String ingredient)
     {
-    	return "Search Results";
+    	return String.format("Searching for recipes with the following ingredients: %s", ingredient);
     }
 }
