@@ -5,7 +5,8 @@ function addIngredient()
     $.ajax
     ({
         url:"http://localhost:8080/addIngredient?ingredient=" + mIngredient,
-        success: function(res) {
+        success: function(res) 
+        {
             var row_html_str = "<tr><td>" + res +"</td></tr>";
     
             if(res != "")
@@ -20,7 +21,14 @@ function addIngredient()
 
 function search()
 {
-    console.log("Searching...");
+    $.ajax
+    ({
+        url:"http://localhost:8080/search",
+        success: function(res) 
+        {
+            console.log(res);
     
-    console.log($("#ingredient_list"));
+            console.log($("#ingredient_list"));    
+        }
+    });
 }
