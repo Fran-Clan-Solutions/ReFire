@@ -42,28 +42,47 @@ class WebServiceApplicationTests
     }
     
     @Test
+    public void testSearch_withNoIngredients() throws Exception
+    {
+        mockMvc.perform(get("/search"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").isNotEmpty())
+                .andExpect(jsonPath("$[0].ingredients").isArray())
+                .andExpect(jsonPath("$[?(@.name == 'Pancakes')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Omelette')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Salad')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Grilled Cheese')]").exists());
+    }
+
+    
+    @Test
     public void testSearch_withSingleIngredient() throws Exception
     {
         mockMvc.perform(get("/search")
-                .param("ingredient_list", "egg"))
+                        .param("ingredient_list", "egg"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Searching for recipes with the following ingredients: [egg]"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").isNotEmpty())
+                .andExpect(jsonPath("$[0].ingredients").isArray())
+                .andExpect(jsonPath("$[?(@.name == 'Pancakes')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Omelette')]").exists());
     }
 
     @Test
     public void testSearch_withMultipleIngredients() throws Exception
     {
         mockMvc.perform(get("/search")
-                .param("ingredient_list", "egg", "milk", "cheese"))
+                        .param("ingredient_list", "egg", "milk", "cheese"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Searching for recipes with the following ingredients: [egg, milk, cheese]"));
-    }
-
-    @Test
-    public void testSearch_withNoIngredients() throws Exception
-    {
-        mockMvc.perform(get("/search"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Searching for recipes with the following ingredients: []"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").isNotEmpty())
+                .andExpect(jsonPath("$[0].ingredients").isArray())
+                .andExpect(jsonPath("$[?(@.name == 'Pancakes')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Omelette')]").exists())
+                .andExpect(jsonPath("$[?(@.name == 'Grilled Cheese')]").exists());
     }
 }
