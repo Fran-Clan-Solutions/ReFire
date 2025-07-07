@@ -26,13 +26,11 @@ function addIngredient()
     });
 }
 
-function search() {
-    $.ajax({
-        url: "http://localhost:8080/search",
-        data: { ingredient_list: mIngredient_list },
-        traditional: true,
-        success: function (res) {
-            console.log(res);
-        }
-    });
+function search() 
+{
+    const params = new URLSearchParams();
+    mIngredient_list.forEach(i => params.append("ingredient_list", i));
+
+    // Navigate to recipes.html with query params
+    window.location.href = `recipes.html?${params.toString()}`;
 }
