@@ -1,4 +1,6 @@
 package com.ReFire.WebService;
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,13 @@ public class WebServiceApplication
     }
     
     @GetMapping("/search")
-    public String search()
+    public String search(@RequestParam(value = "ingredient_list", required = false) List<String> ingredient_list)
     {
-    	return String.format("Searching for recipes...");
+        if (ingredient_list == null)
+        {
+            ingredient_list = List.of("");
+        }
+        return "Searching for recipes with the following ingredients: " + ingredient_list;
     }
     
     @GetMapping("/addIngredient")

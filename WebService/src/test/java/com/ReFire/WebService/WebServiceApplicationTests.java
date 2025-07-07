@@ -40,4 +40,30 @@ class WebServiceApplicationTests
                 .andExpect(status().isOk())
                 .andExpect(content().string(ingredient));
     }
+    
+    @Test
+    public void testSearch_withSingleIngredient() throws Exception
+    {
+        mockMvc.perform(get("/search")
+                .param("ingredient_list", "egg"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Searching for recipes with the following ingredients: [egg]"));
+    }
+
+    @Test
+    public void testSearch_withMultipleIngredients() throws Exception
+    {
+        mockMvc.perform(get("/search")
+                .param("ingredient_list", "egg", "milk", "cheese"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Searching for recipes with the following ingredients: [egg, milk, cheese]"));
+    }
+
+    @Test
+    public void testSearch_withNoIngredients() throws Exception
+    {
+        mockMvc.perform(get("/search"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Searching for recipes with the following ingredients: []"));
+    }
 }
