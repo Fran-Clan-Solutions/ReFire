@@ -16,7 +16,8 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         // list allowed frontend URLs below:
                         .allowedOrigins(
-                            "http://52.53.173.137",  // Production Frontend
+                            "http://www.refirepantry.com",  // Production Frontend
+                            "http://refirepantry.com",  // Production Frontend
                             "http://localhost:8080" // Development Frontend
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
