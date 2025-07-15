@@ -5,7 +5,7 @@ $(document).ready(function ()
 
     $.ajax(
     {
-        url: "http://localhost:8080/search",
+        url: "/search",
         data:
         { 
             ingredient_list: ingredients

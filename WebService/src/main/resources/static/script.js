@@ -6,7 +6,7 @@ function addIngredient()
 
     $.ajax
     ({
-        url:"http://localhost:8080/addIngredient?ingredient=" + mIngredient,
+        url: "/addIngredient?ingredient=" + mIngredient,
         success: function(res) 
         {
             var row_html_str = "<tr><td>" + res +"</td></tr>";
