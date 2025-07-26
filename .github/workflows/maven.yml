@@ -50,5 +50,6 @@ jobs:
         key: ${{ secrets.KEY }}
         port: 22
         script: |
-          sudo killall java
-          sudo nohup java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt &
+          sudo killall java || true
+          nohup sudo java -jar /home/ec2-user/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
+          disown
