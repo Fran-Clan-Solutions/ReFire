@@ -36,5 +36,5 @@ jobs:
         username: ec2-user
         port: 22
         key: ${{ secrets.KEY }}
-        source: "target/WebService-0.0.1-SNAPSHOT.jar"
+        source: "ReFire/WebService/target/*.jar"
         target: "~/"
