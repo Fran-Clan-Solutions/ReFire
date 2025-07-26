@@ -36,3 +36,9 @@ $(document).ready(function ()
         }
     });
 });
+
+function backToSearch()
+{
+    // Navigate to index.html with query params
+    window.location.href = `index.html`;
+}
