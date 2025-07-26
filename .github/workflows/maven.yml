@@ -52,3 +52,4 @@ jobs:
         script: |
           sudo killall java || true
           sudo nohup java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt &
+          disown
