@@ -1,25 +1,23 @@
 let mIngredient_list = []
 
-function addIngredient()
-{
-    var mIngredient = $("#ingredient_input").val();
+function addIngredient() {
+    var mIngredient = $("#ingredient_input").val().trim();
 
-    $.ajax
-    ({
-        url: "/addIngredient?ingredient=" + mIngredient,
-        success: function(res) 
-        {
-            var row_html_str = "<tr><td>" + res +"</td></tr>";
-    
-            if(res != "")
-            {
-                $("#ingredient_list").append(row_html_str);
-                const ingredient = mIngredient.trim();
-                if (ingredient) 
-                {
-                    mIngredient_list.push(ingredient);
-                    $("#ingredient_input").val(""); // clear input
+    if (!mIngredient) return; // ignore empty input
+
+    $.ajax({
+        url: "/addIngredient?ingredient=" + encodeURIComponent(mIngredient),
+        success: function(res) {
+            if (res !== "") {
+                // Add table header if it's the first ingredient
+                if (mIngredient_list.length === 0) {
+                    $("#ingredient_list").append("<tr id='ingredient_header'><th>Ingredients</th></tr>");
                 }
+
+                // Add the new row
+                $("#ingredient_list").append("<tr><td>" + res + "</td></tr>");
+                mIngredient_list.push(mIngredient);
+                $("#ingredient_input").val(""); // clear input
                 console.log(res + " appended");
             }
         }
