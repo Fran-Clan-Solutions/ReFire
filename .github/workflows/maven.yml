@@ -30,7 +30,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file WebService/pom.xml
     - name: Copy files via SSH key
-      uses: appleboy/scp-action@v1
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ec2-52-53-173-137.us-west-1.compute.amazonaws.com
         username: ec2-user
