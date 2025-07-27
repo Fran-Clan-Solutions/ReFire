@@ -63,6 +63,57 @@
         background-color: #555;
         color: #fff;
         }
+        
+        .recipe-details {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .recipe-slide {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+        }
+
+        .recipe-slide.slide-in {
+            transform: translateX(0%);
+            opacity: 1;
+        }
+        
+        /* Slide Panel Styling */
+        .slide-panel {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 400px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+        z-index: 1050;
+        transition: right 0.4s ease-in-out;
+        overflow-y: auto;
+        }
+
+        [data-bs-theme="dark"] .slide-panel {
+        background-color: #1e1e1e;
+        color: #fff;
+        }
+
+        .slide-panel.open {
+        right: 0;
+        }
+
+        .slide-panel-content {
+        padding: 1.5rem;
+        position: relative;
+        }
+
+        #closePanel {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        }
+
     </style>
 </head>
       
@@ -125,6 +176,14 @@
     </svg>
   
     <script src="recipes.js"></script>
+
+    <!-- Slide-in Recipe Detail Panel -->
+    <div id="recipeDetailPanel" class="slide-panel">
+        <div class="slide-panel-content">
+        <button id="closePanel" class="btn btn-close btn-light" aria-label="Close"></button>
+        <div id="recipeDetailContent"></div>
+        </div>
+    </div>
 </body>
   
 </html>

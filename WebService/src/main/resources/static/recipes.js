@@ -49,20 +49,42 @@ function renderRecipes()
     }
     else
     {
-        html = "<ul>";
-        filteredRecipes.forEach(recipe =>
+        html = "<ul class='list-unstyled'>";
+        filteredRecipes.forEach((recipe, index) =>
         {
-            html += `<li>
-                <strong>${recipe.name}</strong> (${recipe.mealType})<br>
-                Time: ${recipe.timeToMake} minutes<br>
-                Instructions: ${recipe.instructions}<br>
-                Ingredients: ${recipe.ingredients.join(", ")}
-            </li><br>`;
+            html += `
+                <li class="mb-3 border-bottom pb-2">
+                    <div class="recipe-header" style="cursor: pointer;" data-index="${index}">
+                        <strong>${recipe.name}</strong> (${recipe.mealType})<br>
+                        Time: ${recipe.timeToMake} minutes
+                    </div>
+                </li>`;
         });
         html += "</ul>";
     }
 
     $("#recipes_list").html(html);
+
+    $(".recipe-header").on("click", function ()
+    {
+        const index = $(this).data("index");
+        const recipe = filteredRecipes[index];
+
+        $("#recipeDetailContent").html(`
+            <h4 class="text-danger">Re<span class="text-primary">cipe</span>: ${recipe.name}</h4>
+            <p><strong>Meal Type:</strong> ${recipe.mealType}</p>
+            <p><strong>Time to Make:</strong> ${recipe.timeToMake} minutes</p>
+            <p><strong>Ingredients:</strong><br> ${recipe.ingredients.join(", ")}</p>
+            <p><strong>Instructions:</strong><br> ${recipe.instructions}</p>
+        `);
+
+        $("#recipeDetailPanel").addClass("open");
+    });
+
+    $("#closePanel").on("click", function ()
+    {
+        $("#recipeDetailPanel").removeClass("open");
+    });
 }
 
 function backToSearch()
