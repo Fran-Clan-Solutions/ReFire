@@ -51,8 +51,7 @@ function clearIngredients()
         mIngredient_list.pop();
     }    
     
-    $(".ingredient_row").remove();
-    $("#ingredient_header").remove();
+    $(".ingredient-badge").remove();
     updateClearButtonVisibility();
 }
 
