@@ -27,19 +27,18 @@ function addIngredient()
         {
             if (res !== "") 
             {
-                // Add table header if it's the first ingredient
-                if (mIngredient_list.length === 0) 
+                // Add tag
+                if (!mIngredient_list.includes(mIngredient))
                 {
-                    $("#ingredient_list").append("<tr id='ingredient_header'><th>Ingredients</th></tr>");
+                    mIngredient_list.push(mIngredient);
+                
+                    const badgeHTML = `<span class='badge bg-secondary ingredient-badge'>${res}</span>`;
+                    $("#ingredient_list").append(badgeHTML);
+                
+                    $("#ingredient_input").val(""); // clear input
+                    console.log(res + " appended");
+                    updateClearButtonVisibility();
                 }
-
-                // Add the new row
-                $("#ingredient_list").append("<tr class='ingredient_row'><td>" + res + "</td></tr>");
-                mIngredient_list.push(mIngredient);
-                $("#ingredient_input").val(""); // clear input
-                console.log(res + " appended");
-
-                updateClearButtonVisibility();
             }
         }
     });
