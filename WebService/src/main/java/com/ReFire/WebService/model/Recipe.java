@@ -1,12 +1,18 @@
 package com.ReFire.WebService.model;
 
 import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "Recipes")
 public class Recipe
 {
+    @Id
+    private String id;  // MongoDB internal ID
+    
     private String name;               // name of the recipe
     private MealType mealType;         // BREAKFAST, LUNCH, DINNER, SNACK
-    private int timeToMake;            // in minutes
+    private int cookTime;            // in minutes
     private List<String> ingredients; // added to support searching
     private String instructions;      // full text of instructions
 
@@ -15,16 +21,26 @@ public class Recipe
     	
     }
 
-    public Recipe(String name, MealType mealType, int timeToMake, List<String> ingredients, String instructions)
+    public Recipe(String name, MealType mealType, int cookTime, List<String> ingredients, String instructions)
     {
         this.name = name;
         this.mealType = mealType;
-        this.timeToMake = timeToMake;
+        this.cookTime = cookTime;
         this.ingredients = ingredients;
         this.instructions = instructions;
     }
 
     // getters & setters
+    public String getId() 
+    {
+        return id;
+    }
+
+    public void setId(String id) 
+    {
+        this.id = id;
+    }
+    
     public String getName() 
     {
     	return name;
@@ -45,14 +61,14 @@ public class Recipe
     	this.mealType = mealType;
     }
 
-    public int getTimeToMake()
+    public int getCookTime()
     {
-    	return timeToMake;
+    	return cookTime;
     }
     
-    public void setTimeToMake(int timeToMake)
+    public void setCookTime(int cookTime)
     {
-    	this.timeToMake = timeToMake;
+    	this.cookTime = cookTime;
     }
 
     public List<String> getIngredients()
@@ -76,12 +92,13 @@ public class Recipe
     }
 
     @Override
-    public String toString()
+    public String toString() 
     {
         return "Recipe{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", mealType=" + mealType +
-                ", timeToMake=" + timeToMake +
+                ", cookTime=" + cookTime +
                 ", ingredients=" + ingredients +
                 ", instructions='" + instructions + '\'' +
                 '}';
