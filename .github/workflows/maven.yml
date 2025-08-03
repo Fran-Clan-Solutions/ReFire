@@ -52,15 +52,5 @@ jobs:
         port: 22
         script: |
           sudo killall java || true
-- name: Run Java Server
-  uses: appleboy/ssh-action@v1
-  with:
-    host: ec2-52-53-173-137.us-west-1.compute.amazonaws.com
-    username: ec2-user
-    key: ${{ secrets.KEY }}
-    port: 22
-    script: |
-      sudo killall java || true
-      sudo nohup MONGODB_URI="${{ secrets.MONGODB_URI }}" java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
-      disown
+          sudo nohup MONGODB_URI="${{ secrets.MONGODB_URI }}" java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
           disown
