@@ -52,5 +52,5 @@ jobs:
         port: 22
         script: |
           sudo killall java || true
-          sudo nohup MONGODB_URI="${{ secrets.MONGODB_URI }}" java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
+          sudo nohup java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
           disown
