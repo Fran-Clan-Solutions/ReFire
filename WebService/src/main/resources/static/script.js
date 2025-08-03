@@ -14,6 +14,19 @@ function updateClearButtonVisibility()
     }
 }
 
+// Trigger addIngredient() on Enter key press
+$(document).ready(function() 
+{
+    $("#ingredient_input").on("keydown", function(e) 
+    {
+        if (e.key === "Enter") 
+        {
+            e.preventDefault(); // stop form from submitting
+            addIngredient();
+        }
+    });
+});
+
 function addIngredient() 
 {
     var mIngredient = $("#ingredient_input").val().trim().toLowerCase();
