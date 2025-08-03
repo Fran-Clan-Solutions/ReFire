@@ -16,7 +16,7 @@ function updateClearButtonVisibility()
 
 function addIngredient() 
 {
-    var mIngredient = $("#ingredient_input").val().trim();
+    var mIngredient = $("#ingredient_input").val().trim().toLowerCase();
 
     if (!mIngredient) return; // ignore empty input
 
