@@ -27,6 +27,19 @@ $(document).ready(function()
     });
 });
 
+// Remove individual tag when X is clicked
+$(document).on("click", ".remove-tag", function() {
+    const ingredient = $(this).data("ingredient");
+
+    // Remove from array
+    mIngredient_list = mIngredient_list.filter(item => item !== ingredient);
+
+    // Remove tag element
+    $(this).parent().remove();
+
+    updateClearButtonVisibility();
+});
+
 function addIngredient() 
 {
     var mIngredient = $("#ingredient_input").val().trim().toLowerCase();
@@ -45,7 +58,13 @@ function addIngredient()
                 {
                     mIngredient_list.push(mIngredient);
                 
-                    const badgeHTML = `<span class='badge bg-secondary ingredient-badge'>${res}</span>`;
+                    // Create tag with remove button
+                    const badgeHTML = `
+                        <span class='badge bg-secondary ingredient-badge'>
+                            ${res}
+                            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${mIngredient}">&times;</span>
+                        </span>
+                    `;
                     $("#ingredient_list").append(badgeHTML);
                 
                     $("#ingredient_input").val(""); // clear input
