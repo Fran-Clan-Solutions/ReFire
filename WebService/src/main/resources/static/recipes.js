@@ -55,7 +55,7 @@ function renderRecipes()
             html += `
                 <li class="mb-3 border-bottom pb-2">
                     <div class="recipe-header" style="cursor: pointer;" data-index="${index}">
-                        <strong>${recipe.name}</strong> (${recipe.mealType})<br>
+                        <strong>${recipe.name}</strong><br>
                         Time: ${recipe.cookTime} minutes
                     </div>
                 </li>`;
@@ -72,7 +72,6 @@ function renderRecipes()
 
         $("#recipeDetailContent").html(`
             <h4 class="text-danger">Re<span class="text-primary">cipe</span>: ${recipe.name}</h4>
-            <p><strong>Meal Type:</strong> ${recipe.mealType}</p>
             <p><strong>Cook Time:</strong> ${recipe.cookTime} minutes</p>
             <p><strong>Ingredients:</strong><br> ${recipe.ingredients.join(", ")}</p>
             <p><strong>Instructions:</strong><br> ${recipe.instructions}</p>
