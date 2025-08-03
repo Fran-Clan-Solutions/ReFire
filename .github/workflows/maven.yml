@@ -52,5 +52,5 @@ jobs:
         port: 22
         script: |
           sudo killall java || true
-          sudo nohup java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
+          sudo MONGODB_URI='mongodb+srv://jdavidfrancisco:Tb_LFt7DgY4x!EP@refirecluster.f50vj5b.mongodb.net/' nohup java -jar /home/ec2-user/WebService/target/WebService-0.0.1-SNAPSHOT.jar --server.port=80 > log.txt 2>&1 < /dev/null &
           disown
