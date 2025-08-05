@@ -114,16 +114,59 @@
         right: 1rem;
         }
 
+        .company-logo {
+        position: fixed;
+        top: 10px;  /* now top instead of bottom */
+        left: 10px; /* stays on left */
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 6px;
+        background-color: white;
+        padding: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        z-index: 999;
+      }
+
+        h1.h3 {
+        line-height: 1;
+      }
+
+        .logo-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .logo-title img {
+        height: 40px;
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .highlight-ingredient {
+        color: red;
+        padding: 2px 4px;
+        border-radius: 4px;
+      } 
     </style>
 </head>
       
 <body class="d-flex align-items-center justify-content-center min-vh-100">
     <div class="container bg-white rounded shadow p-4">
   
-      <!-- Title -->
-      <h1 class="h3 mb-4 fw-normal text-center">
-        <span class="text-danger">Re</span><span class="text-primary">cipes</span>
-      </h1>
+        <!-- Centered Logo + Recipes Title -->
+        <h1 class="h3 mb-4 fw-normal text-center logo-title">
+          <img src="/images/chef_logo.png" alt="ReFire Logo" style="height:40px; width:40px;">
+          <span class="logo-text">
+          <span><span class="text-danger">Re</span><span class="text-primary">cipes</span></span>
+          </span>
+        </h1>
   
         <!-- Back Button and Filters (Inline & Left-Aligned) -->
         <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
@@ -184,6 +227,10 @@
         <div id="recipeDetailContent"></div>
         </div>
     </div>
+
+    <!-- Company Logo Top Left -->
+    <img src="/images/Fran_Clan_Solutions_Logo.png" alt="Company Logo" class="company-logo">
+
 </body>
   
 </html>
