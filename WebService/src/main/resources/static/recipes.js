@@ -1,35 +1,76 @@
 let allRecipes = [];
+let mIngredient_list = [];
 
-$(document).ready(function ()
+$(document).ready(function () 
 {
     const params = new URLSearchParams(window.location.search);
-    const ingredients = params.getAll("ingredient_list");
+    mIngredient_list = params.getAll("ingredient_list").map(i => i.toLowerCase());
 
-    // Fetch recipes once
-    $.ajax({
-        url: "/search",
-        data:
-        { 
-            ingredient_list: ingredients
-        },
-        traditional: true,
-        success: function (recipes)
-        {
-            allRecipes = recipes || [];
-            renderRecipes(); // initial render
+    renderIngredientTags();
+    fetchRecipes();
+
+    $('.meal-filter').on('change', renderRecipes);
+
+    $('#ingredient_input').on('keydown', function (e) 
+    {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addIngredient();
         }
     });
 
-    // Listen for changes on any meal filter checkbox
-    $('.meal-filter').on('change', function ()
+    // Remove ingredient on 'X' click
+    $(document).on("click", ".remove-tag", function () 
     {
-        renderRecipes(); // re-render on filter change
+        const ingredient = $(this).data("ingredient").toLowerCase();
+        mIngredient_list = mIngredient_list.filter(i => i !== ingredient);
+        renderIngredientTags();
+        renderRecipes();
     });
 });
 
-function renderRecipes() {
-    const params = new URLSearchParams(window.location.search);
-    const userIngredients = params.getAll("ingredient_list").map(i => i.toLowerCase());
+// Render interactive ingredient tags
+function renderIngredientTags() 
+{
+    const tagHTML = mIngredient_list.map(i => `
+        <span class='badge bg-secondary ingredient-badge me-2 mb-2'>
+            ${i}
+            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${i}">&times;</span>
+        </span>
+    `).join("");
+    $("#ingredient_list").html(tagHTML);
+}
+
+// Add ingredient from input
+function addIngredient() 
+{
+    const inputVal = $('#ingredient_input').val().trim().toLowerCase();
+    if (!inputVal || mIngredient_list.includes(inputVal)) return;
+
+    mIngredient_list.push(inputVal);
+    $('#ingredient_input').val('');
+    renderIngredientTags();
+    renderRecipes();
+}
+
+// Initial fetch from server
+function fetchRecipes() 
+{
+    $.ajax({
+        url: "/search",
+        data: { ingredient_list: mIngredient_list },
+        traditional: true,
+        success: function (recipes) 
+        {
+            allRecipes = recipes || [];
+            renderRecipes();
+        }
+    });
+}
+
+function renderRecipes() 
+{
+    const userIngredients = mIngredient_list;
 
     const selectedFilters = $('.meal-filter:checked')
         .map(function () { return this.value.toUpperCase(); })
@@ -38,29 +79,34 @@ function renderRecipes() {
     let filteredRecipes = allRecipes;
 
     // Filter by meal type
-    if (selectedFilters.length > 0) {
+    if (selectedFilters.length > 0) 
+    {
         filteredRecipes = allRecipes.filter(recipe =>
             selectedFilters.includes(recipe.mealType.toUpperCase()));
     }
 
     // Sort: by number of matches (desc), then by cook time (asc)
-    filteredRecipes.sort((a, b) => {
+    filteredRecipes.sort((a, b) => 
+    {
         const aMatches = a.ingredients.filter(ing => userIngredients.includes(ing.toLowerCase())).length;
         const bMatches = b.ingredients.filter(ing => userIngredients.includes(ing.toLowerCase())).length;
 
-        if (bMatches !== aMatches) {
-            return bMatches - aMatches; // more matches first
+        if (bMatches !== aMatches) 
+        {
+            return bMatches - aMatches;
         }
-        return a.cookTime - b.cookTime; // shorter cook time first
+        return a.cookTime - b.cookTime;
     });
 
     let html = "";
 
-    if (filteredRecipes.length === 0) {
+    if (filteredRecipes.length === 0) 
+    {
         html = "<p>No recipes found.</p>";
     } else {
         html = "<ul class='list-unstyled'>";
-        filteredRecipes.forEach((recipe, index) => {
+        filteredRecipes.forEach((recipe, index) => 
+        {
             html += `
                 <li class="mb-3 border-bottom pb-2">
                     <div class="recipe-header" style="cursor: pointer;" data-index="${index}">
@@ -74,13 +120,15 @@ function renderRecipes() {
 
     $("#recipes_list").html(html);
 
-    $(".recipe-header").on("click", function () {
+    $(".recipe-header").on("click", function () 
+    {
         const index = $(this).data("index");
         const recipe = filteredRecipes[index];
 
-        // Highlight matching ingredients in blue
-        const highlightedIngredients = recipe.ingredients.map(ing => {
-            if (userIngredients.includes(ing.toLowerCase())) {
+        const highlightedIngredients = recipe.ingredients.map(ing => 
+        {
+            if (userIngredients.includes(ing.toLowerCase()))
+            {
                 return `<span class="highlight-ingredient">${ing}</span>`;
             }
             return ing;
@@ -101,7 +149,7 @@ function renderRecipes() {
     });
 }
 
-function backToSearch()
+function backToSearch() 
 {
     window.location.href = `index.html`;
 }

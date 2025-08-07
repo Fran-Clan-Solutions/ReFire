@@ -28,7 +28,8 @@ $(document).ready(function()
 });
 
 // Remove individual tag when X is clicked
-$(document).on("click", ".remove-tag", function() {
+$(document).on("click", ".remove-tag", function() 
+{
     const ingredient = $(this).data("ingredient");
 
     // Remove from array

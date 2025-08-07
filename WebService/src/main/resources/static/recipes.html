@@ -63,6 +63,10 @@
         background-color: #555;
         color: #fff;
         }
+
+        [data-bs-theme="dark"] label[for="ingredient_input"] {
+          color: #ccc;
+        }
         
         .recipe-details {
             overflow: hidden;
@@ -193,6 +197,14 @@
             </div>
             </div>
         </div>
+
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient">
+          <label for="ingredient_input">Add Ingredient</label>
+        </div>
+
+        <!-- 🏷 Ingredient Tags -->
+        <div id="ingredient_list" class="d-flex flex-wrap mb-3"></div>
   
       <!-- Recipes -->
       <div id="recipes_list" class="mb-2">
