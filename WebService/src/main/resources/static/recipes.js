@@ -223,7 +223,11 @@ function renderRecipes()
     {
         html = "<p>No recipes found.</p>";
     } else {
-        html = "<ul class='list-unstyled'>";
+        if (userIngredients.length === 0) 
+        {
+            html += "<p class='text-muted small'>No ingredients entered — showing all recipes.</p>";
+        }
+        html += "<ul class='list-unstyled'>";
         filteredRecipes.forEach(({ recipe, matchCount }, index) => 
         {
             const totalIngredients = recipe.ingredients.length;
