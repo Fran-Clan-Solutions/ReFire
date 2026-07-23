@@ -131,9 +131,27 @@ $(document).ready(function()
 
     $("#ingredient_input").on("keydown", function(e) 
     {
-        if (e.key === "Enter") 
+        const $items = $("#ingredient_suggestions .suggestion-item");
+
+        if (e.key === "ArrowDown" && $items.length > 0) 
+        {
+            e.preventDefault();
+            suggestionIndex = (suggestionIndex + 1) % $items.length;
+            highlightSuggestion($items);
+        }
+        else if (e.key === "ArrowUp" && $items.length > 0) 
+        {
+            e.preventDefault();
+            suggestionIndex = (suggestionIndex - 1 + $items.length) % $items.length;
+            highlightSuggestion($items);
+        }
+        else if (e.key === "Enter") 
         {
             e.preventDefault(); // stop form from submitting
+            if (suggestionIndex >= 0 && $items.length > 0) 
+            {
+                $("#ingredient_input").val($items.eq(suggestionIndex).text());
+            }
             addIngredient();
         }
         else if (e.key === "Escape") 
@@ -173,9 +191,13 @@ $(document).ready(function()
 // Shows up to 6 known ingredients matching the current input, prioritizing
 // ones that start with the typed text over ones that merely contain it.
 // Ingredients already added are excluded.
+let suggestionIndex = -1; // which suggestion is arrow-key highlighted, -1 = none
+
 function renderSuggestions(rawQuery) 
 {
     const query = rawQuery.trim().toLowerCase();
+    suggestionIndex = -1;
+
     if (query.length < 2) 
     {
         hideSuggestions();
@@ -197,10 +219,25 @@ function renderSuggestions(rawQuery)
         .map(m => `<button type="button" class="list-group-item list-group-item-action suggestion-item">${escapeHtml(m)}</button>`)
         .join("");
     $("#ingredient_suggestions").html(html).show();
+
+    // Keep keyboard and mouse selection in sync
+    $("#ingredient_suggestions .suggestion-item").on("mouseenter", function () 
+    {
+        suggestionIndex = $(this).index();
+        highlightSuggestion($("#ingredient_suggestions .suggestion-item"));
+    });
+}
+
+function highlightSuggestion($items) 
+{
+    $items.removeClass("active");
+    const $active = $items.eq(suggestionIndex).addClass("active");
+    if ($active.length) $active[0].scrollIntoView({ block: "nearest" });
 }
 
 function hideSuggestions() 
 {
+    suggestionIndex = -1;
     $("#ingredient_suggestions").hide().empty();
 }
 
