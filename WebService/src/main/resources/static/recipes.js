@@ -121,7 +121,9 @@ $(document).ready(function ()
     });
 });
 
-// Render interactive ingredient tags
+// Render interactive ingredient tags, and show/hide the Clear All button
+// to match. Called any time mIngredient_list changes, so this is the one
+// place that keeps both in sync.
 function renderIngredientTags() 
 {
     const tagHTML = mIngredient_list.map(i => `
@@ -131,6 +133,15 @@ function renderIngredientTags()
         </span>
     `).join("");
     $("#ingredient_list").html(tagHTML);
+
+    $("#clear_button_container").toggle(mIngredient_list.length > 0);
+}
+
+function clearIngredients() 
+{
+    mIngredient_list = [];
+    renderIngredientTags();
+    renderRecipes();
 }
 
 // Add ingredient from input
