@@ -186,34 +186,35 @@ function renderRecipes()
         .map(function () { return this.value.toUpperCase(); })
         .get();
 
-    let filteredRecipes = allRecipes;
+    // Decorate each recipe with its match count up front, so sorting and
+    // the on-screen badge both use the same number instead of recomputing it.
+    let filteredRecipes = allRecipes.map(recipe => ({
+        recipe,
+        matchCount: recipe.ingredients.filter(ing => userIngredients.includes(ing.toLowerCase())).length
+    }));
 
     // Filter by ingredients: keep recipes matching at least one ingredient
     // the user has on hand. If no ingredients are entered, show everything.
     if (userIngredients.length > 0) 
     {
-        filteredRecipes = filteredRecipes.filter(recipe =>
-            recipe.ingredients.some(ing => userIngredients.includes(ing.toLowerCase())));
+        filteredRecipes = filteredRecipes.filter(({ matchCount }) => matchCount > 0);
     }
 
     // Filter by meal type
     if (selectedFilters.length > 0) 
     {
-        filteredRecipes = filteredRecipes.filter(recipe =>
+        filteredRecipes = filteredRecipes.filter(({ recipe }) =>
             selectedFilters.includes(recipe.mealType.toUpperCase()));
     }
 
     // Sort: by number of matches (desc), then by cook time (asc)
     filteredRecipes.sort((a, b) => 
     {
-        const aMatches = a.ingredients.filter(ing => userIngredients.includes(ing.toLowerCase())).length;
-        const bMatches = b.ingredients.filter(ing => userIngredients.includes(ing.toLowerCase())).length;
-
-        if (bMatches !== aMatches) 
+        if (b.matchCount !== a.matchCount) 
         {
-            return bMatches - aMatches;
+            return b.matchCount - a.matchCount;
         }
-        return a.cookTime - b.cookTime;
+        return a.recipe.cookTime - b.recipe.cookTime;
     });
 
     let html = "";
@@ -223,12 +224,17 @@ function renderRecipes()
         html = "<p>No recipes found.</p>";
     } else {
         html = "<ul class='list-unstyled'>";
-        filteredRecipes.forEach((recipe, index) => 
+        filteredRecipes.forEach(({ recipe, matchCount }, index) => 
         {
+            const totalIngredients = recipe.ingredients.length;
+            const matchBadge = userIngredients.length > 0
+                ? `<span class="badge ${matchCount === totalIngredients ? 'bg-success' : 'bg-secondary'} ms-2">${matchCount}/${totalIngredients} ingredients</span>`
+                : "";
+
             html += `
                 <li class="mb-3 border-bottom pb-2">
                     <div class="recipe-header" style="cursor: pointer;" data-index="${index}">
-                        <strong>${escapeHtml(recipe.name)}</strong><br>
+                        <strong>${escapeHtml(recipe.name)}</strong>${matchBadge}<br>
                         Time: ${recipe.cookTime} minutes
                     </div>
                 </li>`;
@@ -241,7 +247,7 @@ function renderRecipes()
     $(".recipe-header").on("click", function () 
     {
         const index = $(this).data("index");
-        const recipe = filteredRecipes[index];
+        const recipe = filteredRecipes[index].recipe;
 
         const highlightedIngredients = recipe.ingredients.map(ing => 
         {
