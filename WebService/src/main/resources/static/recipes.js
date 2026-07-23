@@ -225,7 +225,7 @@ function renderRecipes()
     } else {
         if (userIngredients.length === 0) 
         {
-            html += "<p class='text-muted small'>No ingredients entered — showing all recipes.</p>";
+            html += "<p class='text-secondary-emphasis small'>No ingredients entered — showing all recipes.</p>";
         }
         html += "<ul class='list-unstyled'>";
         filteredRecipes.forEach(({ recipe, matchCount }, index) => 
