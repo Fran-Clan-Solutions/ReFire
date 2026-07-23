@@ -109,6 +109,37 @@ $(document).ready(function ()
             e.preventDefault();
             addIngredient();
         }
+        else if (e.key === "Escape") 
+        {
+            hideSuggestions();
+        }
+    });
+
+    // Autocomplete: show matching known ingredients as the user types
+    $('#ingredient_input').on('input', function () 
+    {
+        renderSuggestions($(this).val());
+    });
+
+    $('#ingredient_input').on('focus', function () 
+    {
+        if ($(this).val().trim()) renderSuggestions($(this).val());
+    });
+
+    // Clicking a suggestion adds it immediately
+    $(document).on("click", ".suggestion-item", function () 
+    {
+        $('#ingredient_input').val($(this).text());
+        addIngredient();
+    });
+
+    // Click anywhere outside the input/dropdown closes it
+    $(document).on("click", function (e) 
+    {
+        if (!$(e.target).closest("#ingredient_input, #ingredient_suggestions").length) 
+        {
+            hideSuggestions();
+        }
     });
 
     // Remove ingredient on 'X' click
@@ -120,6 +151,40 @@ $(document).ready(function ()
         renderRecipes();
     });
 });
+
+// Shows up to 6 known ingredients matching the current input, prioritizing
+// ones that start with the typed text over ones that merely contain it.
+// Ingredients already added are excluded.
+function renderSuggestions(rawQuery) 
+{
+    const query = rawQuery.trim().toLowerCase();
+    if (query.length < 2) 
+    {
+        hideSuggestions();
+        return;
+    }
+
+    const matches = Array.from(knownIngredients)
+        .filter(ing => ing.includes(query) && !mIngredient_list.includes(ing))
+        .sort((a, b) => a.indexOf(query) - b.indexOf(query) || a.localeCompare(b))
+        .slice(0, 6);
+
+    if (matches.length === 0) 
+    {
+        hideSuggestions();
+        return;
+    }
+
+    const html = matches
+        .map(m => `<button type="button" class="list-group-item list-group-item-action suggestion-item">${escapeHtml(m)}</button>`)
+        .join("");
+    $("#ingredient_suggestions").html(html).show();
+}
+
+function hideSuggestions() 
+{
+    $("#ingredient_suggestions").hide().empty();
+}
 
 // Render interactive ingredient tags, and show/hide the Clear All button
 // to match. Called any time mIngredient_list changes, so this is the one
@@ -154,11 +219,13 @@ function addIngredient()
     if (mIngredient_list.includes(inputVal)) 
     {
         $('#ingredient_input').val('');
+        hideSuggestions();
         return;
     }
 
     mIngredient_list.push(inputVal);
     $('#ingredient_input').val('');
+    hideSuggestions();
     renderIngredientTags();
     renderRecipes();
 }

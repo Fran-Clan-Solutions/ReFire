@@ -198,9 +198,12 @@
             </div>
         </div>
 
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient">
-          <label for="ingredient_input">Add Ingredient</label>
+        <div class="position-relative mb-3">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient" autocomplete="off">
+            <label for="ingredient_input">Add Ingredient</label>
+          </div>
+          <div id="ingredient_suggestions" class="list-group position-absolute w-100" style="z-index: 1000; top: 100%; display: none;"></div>
         </div>
 
         <!-- 🏷 Ingredient Tags -->
