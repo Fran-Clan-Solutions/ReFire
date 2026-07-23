@@ -1,6 +1,19 @@
 let allRecipes = [];
 let mIngredient_list = [];
 
+// Escapes HTML special characters so user-typed ingredient text (and, as a
+// defense-in-depth measure, recipe data) can never be interpreted as
+// markup/script when inserted into the page.
+function escapeHtml(str) 
+{
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 $(document).ready(function () 
 {
     const params = new URLSearchParams(window.location.search);
@@ -34,8 +47,8 @@ function renderIngredientTags()
 {
     const tagHTML = mIngredient_list.map(i => `
         <span class='badge bg-secondary ingredient-badge me-2 mb-2'>
-            ${i}
-            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${i}">&times;</span>
+            ${escapeHtml(i)}
+            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${escapeHtml(i)}">&times;</span>
         </span>
     `).join("");
     $("#ingredient_list").html(tagHTML);
@@ -122,7 +135,7 @@ function renderRecipes()
             html += `
                 <li class="mb-3 border-bottom pb-2">
                     <div class="recipe-header" style="cursor: pointer;" data-index="${index}">
-                        <strong>${recipe.name}</strong><br>
+                        <strong>${escapeHtml(recipe.name)}</strong><br>
                         Time: ${recipe.cookTime} minutes
                     </div>
                 </li>`;
@@ -141,16 +154,16 @@ function renderRecipes()
         {
             if (userIngredients.includes(ing.toLowerCase()))
             {
-                return `<span class="highlight-ingredient">${ing}</span>`;
+                return `<span class="highlight-ingredient">${escapeHtml(ing)}</span>`;
             }
-            return ing;
+            return escapeHtml(ing);
         });
 
         $("#recipeDetailContent").html(`
-            <h4 class="text-danger">Recipe: <span class="text-primary">${recipe.name}</span></h4>
+            <h4 class="text-danger">Recipe: <span class="text-primary">${escapeHtml(recipe.name)}</span></h4>
             <p><strong>Cook Time:</strong> ${recipe.cookTime} minutes</p>
             <p><strong>Ingredients:</strong><br> ${highlightedIngredients.join(", ")}</p>
-            <p><strong>Instructions:</strong><br> ${recipe.instructions}</p>
+            <p><strong>Instructions:</strong><br> ${escapeHtml(recipe.instructions)}</p>
         `);
 
         $("#recipeDetailPanel").addClass("open");

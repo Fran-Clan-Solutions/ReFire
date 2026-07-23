@@ -1,5 +1,17 @@
 let mIngredient_list = []
 
+// Escapes HTML special characters so user-typed ingredient text can never
+// be interpreted as markup/script when inserted into the page.
+function escapeHtml(str) 
+{
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 function updateClearButtonVisibility() 
 {
     if (mIngredient_list.length > 0) 
@@ -62,8 +74,8 @@ function addIngredient()
                     // Create tag with remove button
                     const badgeHTML = `
                         <span class='badge bg-secondary ingredient-badge'>
-                            ${res}
-                            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${mIngredient}">&times;</span>
+                            ${escapeHtml(res)}
+                            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${escapeHtml(mIngredient)}">&times;</span>
                         </span>
                     `;
                     $("#ingredient_list").append(badgeHTML);
