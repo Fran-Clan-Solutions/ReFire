@@ -14,6 +14,17 @@ function escapeHtml(str)
         .replace(/'/g, "&#39;");
 }
 
+// Splits a recipe's instructions string (e.g. "1. Cook spaghetti. 2. Fry
+// bacon...") into an array of individual step strings, with the numbering
+// stripped since the <ol> renders its own numbers.
+function parseInstructionSteps(instructions) 
+{
+    return instructions
+        .split(/\d+\.\s*/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+}
+
 $(document).ready(function () 
 {
     const params = new URLSearchParams(window.location.search);
@@ -154,16 +165,21 @@ function renderRecipes()
         {
             if (userIngredients.includes(ing.toLowerCase()))
             {
-                return `<span class="highlight-ingredient">${escapeHtml(ing)}</span>`;
+                return `<li><span class="highlight-ingredient">${escapeHtml(ing)}</span></li>`;
             }
-            return escapeHtml(ing);
+            return `<li>${escapeHtml(ing)}</li>`;
         });
+
+        const instructionSteps = parseInstructionSteps(recipe.instructions)
+            .map(step => `<li>${escapeHtml(step)}</li>`);
 
         $("#recipeDetailContent").html(`
             <h4 class="text-danger">Recipe: <span class="text-primary">${escapeHtml(recipe.name)}</span></h4>
             <p><strong>Cook Time:</strong> ${recipe.cookTime} minutes</p>
-            <p><strong>Ingredients:</strong><br> ${highlightedIngredients.join(", ")}</p>
-            <p><strong>Instructions:</strong><br> ${escapeHtml(recipe.instructions)}</p>
+            <p class="mb-1"><strong>Ingredients:</strong></p>
+            <ul class="mb-3">${highlightedIngredients.join("")}</ul>
+            <p class="mb-1"><strong>Instructions:</strong></p>
+            <ol>${instructionSteps.join("")}</ol>
         `);
 
         $("#recipeDetailPanel").addClass("open");
