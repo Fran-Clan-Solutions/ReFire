@@ -12,6 +12,20 @@ function escapeHtml(str)
         .replace(/'/g, "&#39;");
 }
 
+// Renders the ingredient tags from mIngredient_list. Single source of truth
+// for what's on screen, used both when restoring ingredients (e.g. coming
+// back from the recipes page) and when adding a new one.
+function renderIngredientTags() 
+{
+    const tagHTML = mIngredient_list.map(i => `
+        <span class='badge bg-secondary ingredient-badge me-2 mb-2'>
+            ${escapeHtml(i)}
+            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${escapeHtml(i)}">&times;</span>
+        </span>
+    `).join("");
+    $("#ingredient_list").html(tagHTML);
+}
+
 function updateClearButtonVisibility() 
 {
     if (mIngredient_list.length > 0) 
@@ -26,9 +40,22 @@ function updateClearButtonVisibility()
     }
 }
 
-// Trigger addIngredient() on Enter key press
+// Restore any ingredients carried back from the recipes page (via "Back to
+// Search"), then wire up the Enter-to-add behavior.
 $(document).ready(function() 
 {
+    const params = new URLSearchParams(window.location.search);
+    params.getAll("ingredient_list").forEach(i => 
+    {
+        const lower = i.toLowerCase();
+        if (lower && !mIngredient_list.includes(lower)) 
+        {
+            mIngredient_list.push(lower);
+        }
+    });
+    renderIngredientTags();
+    updateClearButtonVisibility();
+
     $("#ingredient_input").on("keydown", function(e) 
     {
         if (e.key === "Enter") 
@@ -44,11 +71,9 @@ $(document).on("click", ".remove-tag", function()
 {
     const ingredient = $(this).data("ingredient");
 
-    // Remove from array
+    // Remove from array and re-render so the DOM always matches mIngredient_list
     mIngredient_list = mIngredient_list.filter(item => item !== ingredient);
-
-    // Remove tag element
-    $(this).parent().remove();
+    renderIngredientTags();
 
     updateClearButtonVisibility();
 });
@@ -70,16 +95,8 @@ function addIngredient()
                 if (!mIngredient_list.includes(mIngredient))
                 {
                     mIngredient_list.push(mIngredient);
-                
-                    // Create tag with remove button
-                    const badgeHTML = `
-                        <span class='badge bg-secondary ingredient-badge'>
-                            ${escapeHtml(res)}
-                            <span class="ms-2 text-light remove-tag" style="cursor:pointer;" data-ingredient="${escapeHtml(mIngredient)}">&times;</span>
-                        </span>
-                    `;
-                    $("#ingredient_list").append(badgeHTML);
-                
+                    renderIngredientTags();
+
                     $("#ingredient_input").val(""); // clear input
                     console.log(res + " appended");
                     updateClearButtonVisibility();
@@ -91,12 +108,8 @@ function addIngredient()
 
 function clearIngredients()
 {
-    while (mIngredient_list.length > 0) 
-    {
-        mIngredient_list.pop();
-    }    
-    
-    $(".ingredient-badge").remove();
+    mIngredient_list = [];
+    renderIngredientTags();
     updateClearButtonVisibility();
 }
 

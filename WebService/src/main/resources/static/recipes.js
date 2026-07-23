@@ -176,5 +176,8 @@ function renderRecipes()
 
 function backToSearch() 
 {
-    window.location.href = `index.html`;
+    const params = new URLSearchParams();
+    mIngredient_list.forEach(i => params.append("ingredient_list", i));
+
+    window.location.href = `index.html?${params.toString()}`;
 }
