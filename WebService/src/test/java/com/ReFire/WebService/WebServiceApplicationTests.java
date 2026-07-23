@@ -121,4 +121,68 @@ class WebServiceApplicationTests
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").isNotEmpty());
     }
+
+    // -------------------------
+    // /search tests - ingredient normalization regression
+    //
+    // These guard against recipes being stored with plural ingredient
+    // names (e.g. "eggs", "carrots") while users naturally search with
+    // the singular form. Requires the DB to contain the normalized
+    // recipe data (see ReFire_DB_1_Recipes_normalized.json) or these
+    // will fail even though the API code itself is unchanged.
+    // -------------------------
+    @Test
+    void testSearch_singularEgg_matchesRecipesFormerlyOnlyReachableByPlural() throws Exception 
+    {
+        mockMvc.perform(get("/search").param("ingredient_list", "egg"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$[?(@.name=='Omelette with Spinach')]").exists())
+                .andExpect(jsonPath("$[?(@.name=='Chocolate Brownies')]").exists());
+    }
+
+    @Test
+    void testSearch_singularCarrot_matchesRecipesFormerlyOnlyReachableByPlural() throws Exception 
+    {
+        mockMvc.perform(get("/search").param("ingredient_list", "carrot"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$[?(@.name=='Vegetable Curry')]").exists())
+                .andExpect(jsonPath("$[?(@.name=='Lentil Soup')]").exists());
+    }
+
+    @Test
+    void testSearch_singularBellPepper_matchesRecipesFormerlyOnlyReachableByPlural() throws Exception 
+    {
+        mockMvc.perform(get("/search").param("ingredient_list", "bell pepper"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$[?(@.name=='Chicken Fajitas')]").exists())
+                .andExpect(jsonPath("$[?(@.name=='Stuffed Bell Peppers')]").exists());
+    }
+
+    @Test
+    void testAllRecipes_containNoPluralIngredientNames() throws Exception 
+    {
+        // Data-integrity guard: fails if plural ingredient forms creep back in
+        // (e.g. a new recipe added with "eggs" instead of "egg").
+        java.util.List<String> knownPlurals = java.util.List.of(
+                "eggs", "carrots", "bell peppers", "bananas", "cucumbers", "tortillas", "apples"
+        );
+
+        String response = mockMvc.perform(get("/search"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .toLowerCase();
+
+        for (String plural : knownPlurals) 
+        {
+            org.junit.jupiter.api.Assertions.assertFalse(
+                    response.contains("\"" + plural + "\""),
+                    "Found plural ingredient '" + plural + "' in recipe data; ingredients should be singular"
+            );
+        }
+    }
 }

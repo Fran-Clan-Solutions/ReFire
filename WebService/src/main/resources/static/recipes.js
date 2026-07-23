@@ -53,17 +53,21 @@ function addIngredient()
     renderRecipes();
 }
 
-// Initial fetch from server
+// Fetch the full recipe set once. All ingredient/meal-type filtering happens
+// client-side in renderRecipes(), so adding or removing ingredients on this
+// page never needs another round trip to the server.
 function fetchRecipes() 
 {
     $.ajax({
         url: "/search",
-        data: { ingredient_list: mIngredient_list },
-        traditional: true,
         success: function (recipes) 
         {
             allRecipes = recipes || [];
             renderRecipes();
+        },
+        error: function () 
+        {
+            $("#recipes_list").html("<p class='text-danger'>Couldn't load recipes. Please try refreshing the page.</p>");
         }
     });
 }
@@ -78,10 +82,18 @@ function renderRecipes()
 
     let filteredRecipes = allRecipes;
 
+    // Filter by ingredients: keep recipes matching at least one ingredient
+    // the user has on hand. If no ingredients are entered, show everything.
+    if (userIngredients.length > 0) 
+    {
+        filteredRecipes = filteredRecipes.filter(recipe =>
+            recipe.ingredients.some(ing => userIngredients.includes(ing.toLowerCase())));
+    }
+
     // Filter by meal type
     if (selectedFilters.length > 0) 
     {
-        filteredRecipes = allRecipes.filter(recipe =>
+        filteredRecipes = filteredRecipes.filter(recipe =>
             selectedFilters.includes(recipe.mealType.toUpperCase()));
     }
 
