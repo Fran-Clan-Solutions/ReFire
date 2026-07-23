@@ -1,5 +1,74 @@
 let allRecipes = [];
 let mIngredient_list = [];
+let knownIngredients = new Set(); // vocabulary of every ingredient used across all recipes
+
+// Standard edit-distance calculation, used to find the closest known
+// ingredient to whatever the user typed (catches simple typos).
+function levenshteinDistance(a, b) 
+{
+    const m = a.length, n = b.length;
+    const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++) 
+    {
+        for (let j = 1; j <= n; j++) 
+        {
+            dp[i][j] = a[i - 1] === b[j - 1]
+                ? dp[i - 1][j - 1]
+                : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+    }
+    return dp[m][n];
+}
+
+// Rough English pluralization stripper - not perfect, just good enough to
+// try as a first guess before falling back to fuzzy matching.
+function singularize(word) 
+{
+    if (word.endsWith('ies') && word.length > 4) return word.slice(0, -3) + 'y';
+    if (word.endsWith('es') && word.length > 3) return word.slice(0, -2);
+    if (word.endsWith('s') && !word.endsWith('ss') && word.length > 3) return word.slice(0, -1);
+    return word;
+}
+
+// Attempts to correct a user-typed ingredient to match the app's known
+// ingredient vocabulary, so typos ("tomatoe") and singular/plural mismatches
+// ("eggs") still find the right recipes. Falls back to the original input
+// unchanged if nothing close enough is found (so genuinely new ingredients
+// aren't mangled).
+function normalizeIngredient(rawValue, vocabulary) 
+{
+    const value = rawValue.trim().toLowerCase();
+    if (!value || vocabulary.size === 0) return value;
+    if (vocabulary.has(value)) return value;
+
+    const singular = singularize(value);
+    if (vocabulary.has(singular)) return singular;
+
+    let bestMatch = null;
+    let bestDistance = Infinity;
+    const maxDistance = value.length <= 4 ? 1 : 2; // tighter budget for short words
+
+    vocabulary.forEach(known => 
+    {
+        const distance = levenshteinDistance(value, known);
+        if (distance < bestDistance) 
+        {
+            bestDistance = distance;
+            bestMatch = known;
+        }
+    });
+
+    return (bestMatch && bestDistance <= maxDistance) ? bestMatch : value;
+}
+
+function buildKnownIngredients(recipes) 
+{
+    const set = new Set();
+    recipes.forEach(r => r.ingredients.forEach(i => set.add(i.toLowerCase())));
+    return set;
+}
 
 // Escapes HTML special characters so user-typed ingredient text (and, as a
 // defense-in-depth measure, recipe data) can never be interpreted as
@@ -30,7 +99,6 @@ $(document).ready(function ()
     const params = new URLSearchParams(window.location.search);
     mIngredient_list = params.getAll("ingredient_list").map(i => i.toLowerCase());
 
-    renderIngredientTags();
     fetchRecipes();
 
     $('.meal-filter').on('change', renderRecipes);
@@ -68,8 +136,15 @@ function renderIngredientTags()
 // Add ingredient from input
 function addIngredient() 
 {
-    const inputVal = $('#ingredient_input').val().trim().toLowerCase();
-    if (!inputVal || mIngredient_list.includes(inputVal)) return;
+    const raw = $('#ingredient_input').val().trim().toLowerCase();
+    if (!raw) return;
+
+    const inputVal = normalizeIngredient(raw, knownIngredients);
+    if (mIngredient_list.includes(inputVal)) 
+    {
+        $('#ingredient_input').val('');
+        return;
+    }
 
     mIngredient_list.push(inputVal);
     $('#ingredient_input').val('');
@@ -87,6 +162,13 @@ function fetchRecipes()
         success: function (recipes) 
         {
             allRecipes = recipes || [];
+            knownIngredients = buildKnownIngredients(allRecipes);
+
+            // Correct any ingredients that arrived via URL (e.g. a shared link,
+            // or typed on index.html before the vocabulary was available there).
+            mIngredient_list = mIngredient_list.map(i => normalizeIngredient(i, knownIngredients));
+
+            renderIngredientTags();
             renderRecipes();
         },
         error: function () 
