@@ -2,7 +2,7 @@
 <html lang="en" data-bs-theme="auto">
 <head>
   <meta charset="UTF-8">
-  <title>ReFire</title>
+  <title>Submit a Recipe - ReFire</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Favicon -->
@@ -44,13 +44,9 @@
       background-color: var(--bs-body-bg);
     }
     .form-container {
-      max-width: 400px;
+      max-width: 560px;
       padding: 2rem;
     }
-    .ingredient-badge {
-      margin: 0.25rem;
-    }
-    /* Centered logo + title */
     .logo-title {
       display: flex;
       flex-direction: column;
@@ -67,8 +63,8 @@
     }
     .company-logo {
       position: fixed;
-      top: 10px;  /* top of screen */
-      left: 10px; /* stays on left */
+      top: 10px;
+      left: 10px;
       width: 50px;
       height: 50px;
       object-fit: contain;
@@ -77,6 +73,23 @@
       padding: 4px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       z-index: 999;
+    }
+    .ingredient-badge {
+      margin: 0.25rem;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-number {
+      font-weight: bold;
+      min-width: 1.75rem;
+      text-align: right;
+    }
+    #ingredient_suggestions {
+      z-index: 1000;
     }
   </style>
 </head>
@@ -96,43 +109,60 @@
     </ul>
   </div>
 
-  <!-- Ingredient Search Form -->
   <main class="form-container bg-white rounded shadow p-4">
-    <form onsubmit="return false;">
-      <!-- Centered Logo + Title -->
-      <h1 class="h3 mb-3 fw-normal text-center logo-title">
-        <img src="/images/chef_logo.png" alt="Chef Logo">
-        <span class="logo-text">
-          <span class="text-danger">Re</span><span class="text-primary">Fire</span>
-        </span>
-      </h1>
+    <h1 class="h3 mb-1 fw-normal text-center logo-title">
+      <img src="/images/chef_logo.png" alt="Chef Logo">
+      <span class="logo-text">
+        <span class="text-danger">Re</span><span class="text-primary">Fire</span>
+      </span>
+    </h1>
+    <p class="text-center text-secondary-emphasis mb-4">Submit a Recipe</p>
 
-      <div class="position-relative mb-3">
-        <div class="form-floating">
-          <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient" autocomplete="off">
-          <label for="ingredient_input">Add Ingredient</label>
+    <div id="formAlert" class="alert d-none" role="alert"></div>
+
+    <form id="submitForm" onsubmit="return false;">
+      <div class="mb-3">
+        <label for="recipe_name" class="form-label">Recipe Name</label>
+        <input type="text" class="form-control" id="recipe_name" placeholder="e.g. Spaghetti Carbonara">
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-7">
+          <label for="meal_type" class="form-label">Meal Type</label>
+          <select class="form-select" id="meal_type">
+            <option value="" selected disabled>Choose...</option>
+            <option value="BREAKFAST">Breakfast</option>
+            <option value="LUNCH">Lunch</option>
+            <option value="DINNER">Dinner</option>
+            <option value="SNACK">Snack</option>
+          </select>
         </div>
-        <div id="ingredient_suggestions" class="list-group position-absolute w-100" style="z-index: 1000; top: 100%; display: none;"></div>
+        <div class="col-5">
+          <label for="cook_time" class="form-label">Cook Time (min)</label>
+          <input type="number" class="form-control" id="cook_time" min="1" placeholder="20">
+        </div>
       </div>
 
-      <div class="d-flex justify-content-between gap-2 mb-3">
-        <button class="btn btn-primary w-50" type="button" onclick="addIngredient()">Add</button>
-        <button class="btn btn-success w-50" type="button" onclick="search()">Search</button>
+      <div class="mb-3">
+        <label for="ingredient_input" class="form-label">Ingredients</label>
+        <div class="position-relative">
+          <div class="input-group">
+            <input type="text" class="form-control" id="ingredient_input" placeholder="e.g. garlic" autocomplete="off">
+            <button class="btn btn-outline-secondary" type="button" onclick="addIngredient()">Add</button>
+          </div>
+        </div>
+        <div id="ingredient_list" class="d-flex flex-wrap mt-2"></div>
       </div>
 
-      <p class="text-secondary-emphasis small text-center mb-3">Add what's in your fridge, or just hit Search to browse everything.</p>
-
-      <!-- 🏷 Ingredient Tags -->
-      <div id="ingredient_list" class="d-flex flex-wrap mb-3"></div>
-
-      <div id="clear_button_container" class="text-center mb-3" style="display: none;">
-        <button class="btn btn-outline-danger btn-sm" type="button" onclick="clearIngredients()">Clear All</button>
+      <div class="mb-3">
+        <label class="form-label">Instructions</label>
+        <div id="steps_container"></div>
+        <button class="btn btn-outline-secondary btn-sm mt-1" type="button" onclick="addStep()">+ Add Step</button>
       </div>
+
+      <button class="btn btn-success w-100" type="button" onclick="submitRecipe()">Submit Recipe</button>
+      <p class="text-secondary-emphasis small text-center mt-2 mb-0">Your recipe will be reviewed before it's added.</p>
     </form>
-
-    <p class="text-center small mb-0">
-      <a href="submit.html" class="link-secondary">Have a recipe to share? Submit it here</a>
-    </p>
   </main>
 
   <!-- Theme Icons -->
@@ -140,10 +170,9 @@
     <symbol id="circle-half" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 0 8 1v14zM8 0a8 8 0 1 1 0 16z"/></symbol>
   </svg>
 
-  <!-- Company Logo Bottom Left -->
+  <!-- Company Logo -->
   <img src="/images/Fran_Clan_Solutions_Logo.png" alt="Company Logo" class="company-logo">
 
-  <!-- Main Logic -->
-  <script src="script.js"></script>
+  <script src="submit.js"></script>
 </body>
 </html>

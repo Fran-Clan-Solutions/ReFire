@@ -2,8 +2,9 @@
 <html lang="en" data-bs-theme="auto">
 <head>
   <meta charset="UTF-8">
-  <title>ReFire</title>
+  <title>Admin Review - ReFire</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/chef_logo.png">
@@ -43,32 +44,34 @@
     body {
       background-color: var(--bs-body-bg);
     }
-    .form-container {
+    .page-container {
+      max-width: 720px;
+    }
+    .lock-container {
       max-width: 400px;
-      padding: 2rem;
     }
-    .ingredient-badge {
-      margin: 0.25rem;
-    }
-    /* Centered logo + title */
     .logo-title {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
     }
     .logo-title img {
-      height: 50px;
-      width: 50px;
+      height: 40px;
+      width: 40px;
     }
     .logo-text {
       font-size: 1.5rem;
       font-weight: bold;
     }
+    .recipe-name-input:focus {
+      box-shadow: none;
+      background-color: var(--bs-tertiary-bg);
+    }
     .company-logo {
       position: fixed;
-      top: 10px;  /* top of screen */
-      left: 10px; /* stays on left */
+      top: 10px;
+      left: 10px;
       width: 50px;
       height: 50px;
       object-fit: contain;
@@ -96,54 +99,40 @@
     </ul>
   </div>
 
-  <!-- Ingredient Search Form -->
-  <main class="form-container bg-white rounded shadow p-4">
-    <form onsubmit="return false;">
-      <!-- Centered Logo + Title -->
-      <h1 class="h3 mb-3 fw-normal text-center logo-title">
-        <img src="/images/chef_logo.png" alt="Chef Logo">
-        <span class="logo-text">
-          <span class="text-danger">Re</span><span class="text-primary">Fire</span>
-        </span>
-      </h1>
+  <!-- Lock Screen -->
+  <div id="lockScreen" class="lock-container bg-white rounded shadow p-4 mx-3">
+    <h1 class="h3 mb-3 fw-normal text-center logo-title">
+      <img src="/images/chef_logo.png" alt="Chef Logo" style="height:40px; width:40px;">
+      <span class="logo-text">Admin</span>
+    </h1>
+    <label for="admin_key_input" class="form-label">Admin Key</label>
+    <input type="password" class="form-control mb-2" id="admin_key_input" placeholder="Enter admin key" autocomplete="off">
+    <div id="unlockError" class="text-danger small mb-2 d-none"></div>
+    <button class="btn btn-primary w-100" id="unlockBtn" type="button">Unlock</button>
+  </div>
 
-      <div class="position-relative mb-3">
-        <div class="form-floating">
-          <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient" autocomplete="off">
-          <label for="ingredient_input">Add Ingredient</label>
-        </div>
-        <div id="ingredient_suggestions" class="list-group position-absolute w-100" style="z-index: 1000; top: 100%; display: none;"></div>
+  <!-- Admin Content -->
+  <div id="adminContent" class="page-container w-100 mx-3 d-none">
+    <div class="bg-white rounded shadow p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">
+          Pending Submissions <span class="badge bg-secondary" id="pendingCount">0</span>
+        </h1>
+        <button class="btn btn-outline-secondary btn-sm" id="lockBtn" type="button">Lock</button>
       </div>
 
-      <div class="d-flex justify-content-between gap-2 mb-3">
-        <button class="btn btn-primary w-50" type="button" onclick="addIngredient()">Add</button>
-        <button class="btn btn-success w-50" type="button" onclick="search()">Search</button>
-      </div>
-
-      <p class="text-secondary-emphasis small text-center mb-3">Add what's in your fridge, or just hit Search to browse everything.</p>
-
-      <!-- 🏷 Ingredient Tags -->
-      <div id="ingredient_list" class="d-flex flex-wrap mb-3"></div>
-
-      <div id="clear_button_container" class="text-center mb-3" style="display: none;">
-        <button class="btn btn-outline-danger btn-sm" type="button" onclick="clearIngredients()">Clear All</button>
-      </div>
-    </form>
-
-    <p class="text-center small mb-0">
-      <a href="submit.html" class="link-secondary">Have a recipe to share? Submit it here</a>
-    </p>
-  </main>
+      <div id="pendingList"></div>
+    </div>
+  </div>
 
   <!-- Theme Icons -->
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="circle-half" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 0 8 1v14zM8 0a8 8 0 1 1 0 16z"/></symbol>
   </svg>
 
-  <!-- Company Logo Bottom Left -->
+  <!-- Company Logo -->
   <img src="/images/Fran_Clan_Solutions_Logo.png" alt="Company Logo" class="company-logo">
 
-  <!-- Main Logic -->
-  <script src="script.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
