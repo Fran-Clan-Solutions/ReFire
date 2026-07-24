@@ -78,6 +78,36 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       z-index: 999;
     }
+
+    /* Force this card to render with consistent light colors no matter
+       what theme the page is in. Bootstrap's dark/light variables only
+       reliably cascade into its own components (form-control, etc.) -
+       plain text just inherits whatever was already computed higher up
+       the page, so nested data-bs-theme alone doesn't reach it. */
+    .light-card {
+      background-color: #ffffff;
+      color: #212529;
+    }
+    .light-card label,
+    .light-card h1, .light-card h2, .light-card h3,
+    .light-card h4, .light-card h5, .light-card h6,
+    .light-card p, .light-card span, .light-card strong {
+      color: #212529;
+    }
+    .light-card .form-control,
+    .light-card .form-select {
+      background-color: #ffffff;
+      color: #212529;
+      border-color: #ced4da;
+    }
+    .light-card .form-control::placeholder {
+      color: #6c757d;
+      opacity: 1;
+    }
+    .light-card small,
+    .light-card .small {
+      color: #495057;
+    }
   </style>
 </head>
 
@@ -97,7 +127,7 @@
   </div>
 
   <!-- Ingredient Search Form -->
-  <main class="form-container bg-white rounded shadow p-4" data-bs-theme="light">
+  <main class="form-container light-card rounded shadow p-4">
     <form onsubmit="return false;">
       <!-- Centered Logo + Title -->
       <h1 class="h3 mb-3 fw-normal text-center logo-title">
@@ -109,7 +139,7 @@
 
       <div class="position-relative mb-3">
         <div class="form-floating">
-          <input type="text" class="form-control" id="ingredient_input" placeholder="Ingredient" autocomplete="off">
+          <input type="text" class="form-control" id="ingredient_input" autocomplete="off">
           <label for="ingredient_input">Add Ingredient</label>
         </div>
         <div id="ingredient_suggestions" class="list-group position-absolute w-100" style="z-index: 1000; top: 100%; display: none;"></div>

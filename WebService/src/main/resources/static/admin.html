@@ -66,7 +66,7 @@
     }
     .recipe-name-input:focus {
       box-shadow: none;
-      background-color: var(--bs-tertiary-bg);
+      background-color: #f8f9fa;
     }
     .company-logo {
       position: fixed;
@@ -80,6 +80,41 @@
       padding: 4px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       z-index: 999;
+    }
+
+    /* Force these cards to render with consistent light colors no matter
+       what theme the page is in. Bootstrap's dark/light variables only
+       reliably cascade into its own components (form-control, etc.) -
+       plain text just inherits whatever was already computed higher up
+       the page, so nested data-bs-theme alone doesn't reach it. */
+    .light-card {
+      background-color: #ffffff;
+      color: #212529;
+    }
+    .light-card label,
+    .light-card h1, .light-card h2, .light-card h3,
+    .light-card h4, .light-card h5, .light-card h6,
+    .light-card p, .light-card span, .light-card strong {
+      color: #212529;
+    }
+    .light-card .form-control,
+    .light-card .form-select {
+      background-color: #ffffff;
+      color: #212529;
+      border-color: #ced4da;
+    }
+    .light-card .form-control::placeholder {
+      color: #6c757d;
+      opacity: 1;
+    }
+    .light-card small,
+    .light-card .small {
+      color: #495057;
+    }
+    .light-card .card {
+      background-color: #ffffff;
+      color: #212529;
+      border-color: #dee2e6;
     }
   </style>
 </head>
@@ -103,7 +138,7 @@
   </div>
 
   <!-- Lock Screen -->
-  <div id="lockScreen" class="lock-container bg-white rounded shadow p-4 mx-3" data-bs-theme="light">
+  <div id="lockScreen" class="lock-container light-card rounded shadow p-4 mx-3">
     <h1 class="h3 mb-3 fw-normal text-center logo-title">
       <img src="/images/chef_logo.png" alt="Chef Logo" style="height:40px; width:40px;">
       <span class="logo-text">Admin</span>
@@ -116,7 +151,7 @@
 
   <!-- Admin Content -->
   <div id="adminContent" class="page-container w-100 mx-3 d-none">
-    <div class="bg-white rounded shadow p-4" data-bs-theme="light">
+    <div class="light-card rounded shadow p-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h4 mb-0">
           Pending Submissions <span class="badge bg-secondary" id="pendingCount">0</span>
