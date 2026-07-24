@@ -166,7 +166,7 @@ function renderPending()
 
     if (pendingSubmissions.length === 0)
     {
-        $("#pendingList").html(`<p class="text-center text-secondary-emphasis py-5 mb-0">No pending submissions. 🎉</p>`);
+        $("#pendingList").html(`<p class="text-center py-5 mb-0">No pending submissions. 🎉</p>`);
         return;
     }
 
@@ -200,7 +200,7 @@ function renderCard(sub)
                     <input type="text" class="form-control form-control-lg fw-bold recipe-name-input border-0 px-0" value="${escapeHtml(suggestedName)}">
                     <span class="badge bg-primary text-nowrap mt-2">${escapeHtml(sub.mealType)}</span>
                 </div>
-                <p class="text-secondary-emphasis small mb-3">Cook time: ${sub.cookTime} min${submittedDate ? ` &middot; Submitted ${submittedDate}` : ""}</p>
+                <p class="small mb-3">Cook time: ${sub.cookTime} min${submittedDate ? ` &middot; Submitted ${submittedDate}` : ""}</p>
 
                 <p class="mb-1"><strong>Ingredients:</strong></p>
                 <ul class="mb-3">

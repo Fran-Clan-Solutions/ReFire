@@ -83,6 +83,22 @@ $(document).on("input", ".step-input", function ()
     mSteps[idx] = $(this).val();
 });
 
+// Enter adds a new step right after the current one, like a numbered list
+// editor - since a plain text input can't hold a literal line break, a new
+// step is the equivalent of "a new line" for instructions.
+$(document).on("keydown", ".step-input", function (e)
+{
+    if (e.key === "Enter")
+    {
+        e.preventDefault();
+        const idx = $(this).data("index");
+        mSteps[idx] = $(this).val(); // make sure the current edit isn't lost
+        mSteps.splice(idx + 1, 0, "");
+        renderSteps();
+        $(".step-input").eq(idx + 1).trigger("focus");
+    }
+});
+
 $(document).on("click", ".remove-step", function ()
 {
     const idx = $(this).data("index");

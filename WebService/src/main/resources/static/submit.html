@@ -96,6 +96,9 @@
 
 <body class="d-flex align-items-center justify-content-center min-vh-100">
 
+  <!-- Home Button -->
+  <a href="index.html" class="btn btn-outline-secondary btn-sm position-fixed top-0 end-0 m-3" style="z-index: 1000;">← Home</a>
+
   <!-- Dark Mode Dropdown -->
   <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3">
     <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle theme">
@@ -116,7 +119,7 @@
         <span class="text-danger">Re</span><span class="text-primary">Fire</span>
       </span>
     </h1>
-    <p class="text-center text-secondary-emphasis mb-4">Submit a Recipe</p>
+    <p class="text-center mb-4">Submit a Recipe</p>
 
     <div id="formAlert" class="alert d-none" role="alert"></div>
 
@@ -161,7 +164,7 @@
       </div>
 
       <button class="btn btn-success w-100" type="button" onclick="submitRecipe()">Submit Recipe</button>
-      <p class="text-secondary-emphasis small text-center mt-2 mb-0">Your recipe will be reviewed before it's added.</p>
+      <p class="small text-center mt-2 mb-0">Your recipe will be reviewed before it's added.</p>
     </form>
   </main>
 
